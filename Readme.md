@@ -1,7 +1,7 @@
 # Личный проект «Кекстаграм» [![Build status][travis-image]][travis-url]
 
 * Студент: [Ирина Вахрушева](https://up.htmlacademy.ru/javascript/17/user/973631).
-* Наставник: `Неизвестно`.
+* Наставник: [Артём Рудов](https://htmlacademy.ru/profile/artrudov).
 
 ---
 
