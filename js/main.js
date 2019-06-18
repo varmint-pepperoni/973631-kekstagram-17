@@ -2,7 +2,7 @@
 
 var PHOTOS_COUNT = 25;
 
-var generatePhotosData = function () {
+var generatePhotos = function () {
   var photos = [];
 
   for (var i = 0; i < PHOTOS_COUNT; i++) {
@@ -44,25 +44,23 @@ var generateComment = function () {
   };
 };
 
-var getRandomNum = function (from, to) {
-  var diff = to - from;
-
-  return from + Math.floor(Math.random() * diff + 1);
-};
+function getRandomNum(min, max) {
+  return Math.floor(Math.random() * (max - min)) + min + 1;
+}
 
 var getRandomArrValue = function (arr) {
   return arr[getRandomNum(0, arr.length - 1)];
 };
 
-var createElPhoto = function (data) {
+var createElPhoto = function (photo) {
   var elPhoto = elPhotoTemplate.cloneNode(true);
   var elImg = elPhoto.querySelector('.picture__img');
   var elLikes = elPhoto.querySelector('.picture__likes');
   var elComments = elPhoto.querySelector('.picture__comments');
 
-  elImg.src = data.url;
-  elLikes.textContent = data.likes;
-  elComments.textContent = data.comments.length;
+  elImg.src = photo.url;
+  elLikes.textContent = photo.likes;
+  elComments.textContent = photo.comments.length;
 
   return elPhoto;
 };
@@ -89,7 +87,7 @@ var insertElPhotos = function (arr) {
 
 var elPhotoTemplate = document.querySelector('#picture').content;
 var elPhotosContainer = document.querySelector('.pictures');
-var photosData = generatePhotosData();
+var photosData = generatePhotos();
 var arrElPhotos = createElPhotos(photosData);
 
 insertElPhotos(arrElPhotos);
