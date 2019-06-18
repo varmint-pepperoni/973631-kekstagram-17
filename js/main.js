@@ -1,12 +1,11 @@
 'use strict';
 
-var elPhotoTemplate = document.querySelector('#picture').content;
-var elPhotosContainer = document.querySelector('.pictures');
+var PHOTOS_COUNT = 25;
 
 var generatePhotosData = function () {
   var photos = [];
 
-  for (var i = 0; i < 25; i++) {
+  for (var i = 0; i < PHOTOS_COUNT; i++) {
     photos[i] = {
       url: 'photos/' + (i + 1) + '.jpg',
       likes: getRandomNum(15, 200),
@@ -48,7 +47,7 @@ var generateComment = function () {
 var getRandomNum = function (from, to) {
   var diff = to - from;
 
-  return Math.round(from + (Math.random() * diff));
+  return from + Math.floor(Math.random() * diff + 1);
 };
 
 var getRandomArrValue = function (arr) {
@@ -88,6 +87,8 @@ var insertElPhotos = function (arr) {
   elPhotosContainer.appendChild(fragment);
 };
 
+var elPhotoTemplate = document.querySelector('#picture').content;
+var elPhotosContainer = document.querySelector('.pictures');
 var photosData = generatePhotosData();
 var arrElPhotos = createElPhotos(photosData);
 
