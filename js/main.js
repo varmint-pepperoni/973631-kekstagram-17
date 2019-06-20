@@ -95,35 +95,109 @@
 })();
 
 (function () {
-  var isOpened = false;
-
-  var uploadFileChangeHandler = function () {
-    openForm();
+  var EFFECTS = {
+    chrome: 'grayscale(1)',
+    sepia: 'sepia(1)',
+    marvin: 'invert(100%)',
+    phobos: 'blur(3px)',
+    heat: 'brightness(3)'
   };
 
-  var imgUploadCancelClickHandler = function() {
+  var formChangeHandler = function (e) {
+    if (e.target === elUploadFile) {
+      openForm();
+    } else if (e.target.classList.contains('effects__radio')) {
+      updateEffectState();
+    }
+  };
+
+  var formResetHandler = function () {
+    // Обновляем форму после всплытия события.
+    requestAnimationFrame(function () {
+      updateForm();
+    });
+  };
+
+  var imgUploadCancelClickHandler = function (e) {
+    e.preventDefault();
     closeForm();
   };
 
+  var documentKeydownHandler = function (e) {
+    if (window.keyboard.isEscPressed(e)) {
+      closeForm();
+    }
+  };
+
   var openForm = function () {
-    if (!isOpened) {
+    if (!state.isOpened) {
       elImgUploadOverlay.classList.remove('hidden');
       elImgUploadCancel.addEventListener('click', imgUploadCancelClickHandler);
-      isOpened = true;
+      document.addEventListener('keydown', documentKeydownHandler);
+      state.isOpened = true;
     }
   };
 
   var closeForm = function () {
-    if (isOpened) {
+    if (state.isOpened) {
       elImgUploadOverlay.classList.add('hidden');
       elImgUploadCancel.removeEventListener('click', imgUploadCancelClickHandler);
-      isOpened = false;
+      document.removeEventListener('keydown', documentKeydownHandler);
+      elImgUploadForm.reset();
+      state.isOpened = false;
     }
   };
 
-  var elUploadFile = document.querySelector('#upload-file');
-  var elImgUploadOverlay = document.querySelector('.img-upload__overlay');
-  var elImgUploadCancel = elImgUploadOverlay.querySelector('.img-upload__cancel');
+  var updateEffectState = function () {
+    var elActiveEffectRadio = getActiveEffectRadio();
+    var effectValue = EFFECTS[elActiveEffectRadio.value];
 
-  elUploadFile.addEventListener('change', uploadFileChangeHandler);
+    state.effect = effectValue ? elActiveEffectRadio.value : null;
+    elImgUploadPreview.style.filter = effectValue || '';
+  };
+
+  var updateForm = function () {
+    updateEffectState();
+  };
+
+  var getActiveEffectRadio = function () {
+    var radio = null;
+
+    for (var i = 0; i < elEffectRadios.length; i++) {
+      if (elEffectRadios[i].checked) {
+        radio = elEffectRadios[i];
+        break;
+      }
+    }
+
+    return radio;
+  };
+
+  var elUploadFile = document.querySelector('#upload-file');
+  var elImgUploadForm = document.querySelector('.img-upload__form');
+  var elImgUploadOverlay = elImgUploadForm.querySelector('.img-upload__overlay');
+  var elImgUploadCancel = elImgUploadOverlay.querySelector('.img-upload__cancel');
+  var elEffectRadios = elImgUploadOverlay.querySelectorAll('.effects__radio');
+  var elImgUploadPreview = elImgUploadOverlay.querySelector('.img-upload__preview');
+  var state = {
+    isOpened: false,
+    effect: null
+  };
+
+  elImgUploadForm.addEventListener('change', formChangeHandler);
+  elImgUploadForm.addEventListener('reset', formResetHandler);
+})();
+
+(function () {
+  var ENTER_KEYCODE = 13;
+  var ESC_KEYCODE = 27;
+
+  window.keyboard = {
+    isEnterPressed: function (evt) {
+      return evt.keyCode === ENTER_KEYCODE;
+    },
+    isEscPressed: function (evt) {
+      return evt.keyCode === ESC_KEYCODE;
+    }
+  };
 })();
