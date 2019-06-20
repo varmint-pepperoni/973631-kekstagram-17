@@ -93,3 +93,37 @@
 
   insertElPhotos(arrElPhotos);
 })();
+
+(function () {
+  var isOpened = false;
+
+  var uploadFileChangeHandler = function () {
+    openForm();
+  };
+
+  var imgUploadCancelClickHandler = function() {
+    closeForm();
+  };
+
+  var openForm = function () {
+    if (!isOpened) {
+      elImgUploadOverlay.classList.remove('hidden');
+      elImgUploadCancel.addEventListener('click', imgUploadCancelClickHandler);
+      isOpened = true;
+    }
+  };
+
+  var closeForm = function () {
+    if (isOpened) {
+      elImgUploadOverlay.classList.add('hidden');
+      elImgUploadCancel.removeEventListener('click', imgUploadCancelClickHandler);
+      isOpened = false;
+    }
+  };
+
+  var elUploadFile = document.querySelector('#upload-file');
+  var elImgUploadOverlay = document.querySelector('.img-upload__overlay');
+  var elImgUploadCancel = elImgUploadOverlay.querySelector('.img-upload__cancel');
+
+  elUploadFile.addEventListener('change', uploadFileChangeHandler);
+})();
