@@ -102,20 +102,24 @@
     phobos: 'blur(3px)',
     heat: 'brightness(3)'
   };
+  var SCALE_INITIAL = 100;
+  var SCALE_MIN = 25;
+  var SCALE_MAX = 100;
+  var SCALE_STEP = 25;
 
   var formChangeHandler = function (e) {
     if (e.target === elUploadFile) {
       openForm();
     } else if (e.target.classList.contains('effects__radio')) {
-      updateEffectState();
+      updateEffect();
+    } else if (e.target === elScaleValue) {
+      updateScale();
     }
   };
 
   var formResetHandler = function () {
     // Обновляем форму после всплытия события.
-    requestAnimationFrame(function () {
-      updateForm();
-    });
+    requestAnimationFrame(updateForm);
   };
 
   var imgUploadCancelClickHandler = function (e) {
@@ -129,11 +133,21 @@
     }
   };
 
+  var scaleSmallerClickHandler = function () {
+    setScale(state.scale - SCALE_STEP);
+  };
+
+  var scaleBiggerClickHandler = function () {
+    setScale(state.scale + SCALE_STEP);
+  };
+
   var openForm = function () {
     if (!state.isOpened) {
       elImgUploadOverlay.classList.remove('hidden');
       elImgUploadCancel.addEventListener('click', imgUploadCancelClickHandler);
       document.addEventListener('keydown', documentKeydownHandler);
+      elScaleSmaller.addEventListener('click', scaleSmallerClickHandler);
+      elScaleBigger.addEventListener('click', scaleBiggerClickHandler);
       state.isOpened = true;
     }
   };
@@ -143,12 +157,14 @@
       elImgUploadOverlay.classList.add('hidden');
       elImgUploadCancel.removeEventListener('click', imgUploadCancelClickHandler);
       document.removeEventListener('keydown', documentKeydownHandler);
+      elScaleSmaller.removeEventListener('click', scaleSmallerClickHandler);
+      elScaleBigger.removeEventListener('click', scaleBiggerClickHandler);
       elImgUploadForm.reset();
       state.isOpened = false;
     }
   };
 
-  var updateEffectState = function () {
+  var updateEffect = function () {
     var elActiveEffectRadio = getActiveEffectRadio();
     var effectValue = EFFECTS[elActiveEffectRadio.value];
 
@@ -156,8 +172,39 @@
     elImgUploadPreview.style.filter = effectValue || '';
   };
 
+  var setScale = function (scale) {
+    scale = normalizeScale(scale);
+
+    if (scale !== state.scale) {
+      elScaleValue.value = scale + '%';
+      updateScale();
+    }
+  };
+
+  var updateScale = function () {
+    var scale = parseInt(elScaleValue.value, 10);
+
+    scale = normalizeScale(scale);
+
+    if (scale !== state.scale) {
+      state.scale = scale;
+      elImgUploadPreview.style.transform = 'scale(' + (scale / 100) + ')';
+    }
+  };
+
+  var normalizeScale = function (scale) {
+    if (scale < SCALE_MIN) {
+      scale = SCALE_MIN;
+    } else if (scale > SCALE_MAX) {
+      scale = SCALE_MAX;
+    }
+
+    return scale;
+  };
+
   var updateForm = function () {
-    updateEffectState();
+    updateEffect();
+    updateScale();
   };
 
   var getActiveEffectRadio = function () {
@@ -179,9 +226,13 @@
   var elImgUploadCancel = elImgUploadOverlay.querySelector('.img-upload__cancel');
   var elEffectRadios = elImgUploadOverlay.querySelectorAll('.effects__radio');
   var elImgUploadPreview = elImgUploadOverlay.querySelector('.img-upload__preview');
+  var elScaleValue = elImgUploadOverlay.querySelector('.scale__control--value');
+  var elScaleSmaller = elImgUploadOverlay.querySelector('.scale__control--smaller');
+  var elScaleBigger = elImgUploadOverlay.querySelector('.scale__control--bigger');
   var state = {
     isOpened: false,
-    effect: null
+    effect: null,
+    scale: SCALE_INITIAL
   };
 
   elImgUploadForm.addEventListener('change', formChangeHandler);
