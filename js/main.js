@@ -96,16 +96,44 @@
 
 (function () {
   var EFFECTS = {
-    chrome: 'grayscale(1)',
-    sepia: 'sepia(1)',
-    marvin: 'invert(100%)',
-    phobos: 'blur(3px)',
-    heat: 'brightness(3)'
+    chrome: {
+      fn: 'grayscale',
+      min: 0,
+      max: 1,
+      measure: ''
+    },
+    sepia: {
+      fn: 'sepia',
+      min: 0,
+      max: 1,
+      measure: ''
+    },
+    marvin: {
+      fn: 'invert',
+      min: 0,
+      max: 100,
+      measure: '%'
+    },
+    phobos: {
+      fn: 'blur',
+      min: 0,
+      max: 3,
+      measure: 'px'
+    },
+    heat: {
+      fn: 'brightness',
+      min: 1,
+      max: 3,
+      measure: 0
+    }
   };
   var SCALE_INITIAL = 100;
   var SCALE_MIN = 25;
   var SCALE_MAX = 100;
   var SCALE_STEP = 25;
+  var SATURATION_INITIAL = 100;
+  var SATURATION_MIN = 0;
+  var SATURATION_MAX = 100;
 
   var formChangeHandler = function (e) {
     if (e.target === elUploadFile) {
@@ -114,6 +142,8 @@
       updateEffect();
     } else if (e.target === elScaleValue) {
       updateScale();
+    } else if (e.target === elSaturationValue) {
+      updateSaturation();
     }
   };
 
@@ -141,6 +171,14 @@
     setScale(state.scale + SCALE_STEP);
   };
 
+  var saturationLineMouseupHandler = function (e) {
+    var boundingClientRect = elSaturationLine.getBoundingClientRect();
+    var xDiff = e.clientX - boundingClientRect.x;
+    var saturation = Math.round(xDiff / boundingClientRect.width * 100);
+
+    setSaturation(saturation);
+  };
+
   var openForm = function () {
     if (!state.isOpened) {
       elImgUploadOverlay.classList.remove('hidden');
@@ -148,6 +186,7 @@
       document.addEventListener('keydown', documentKeydownHandler);
       elScaleSmaller.addEventListener('click', scaleSmallerClickHandler);
       elScaleBigger.addEventListener('click', scaleBiggerClickHandler);
+      elSaturationLine.addEventListener('mouseup', saturationLineMouseupHandler);
       state.isOpened = true;
     }
   };
@@ -159,32 +198,22 @@
       document.removeEventListener('keydown', documentKeydownHandler);
       elScaleSmaller.removeEventListener('click', scaleSmallerClickHandler);
       elScaleBigger.removeEventListener('click', scaleBiggerClickHandler);
+      elSaturationLine.removeEventListener('mouseup', saturationLineMouseupHandler);
       elImgUploadForm.reset();
       state.isOpened = false;
     }
   };
 
-  var updateEffect = function () {
-    var elActiveEffectRadio = getActiveEffectRadio();
-    var effectValue = EFFECTS[elActiveEffectRadio.value];
-
-    state.effect = effectValue ? elActiveEffectRadio.value : null;
-    elImgUploadPreview.style.filter = effectValue || '';
-  };
-
-  var setScale = function (scale) {
-    scale = normalizeScale(scale);
-
-    if (scale !== state.scale) {
-      elScaleValue.value = scale + '%';
-      updateScale();
-    }
+  var updateForm = function () {
+    updateScale();
+    updateEffect();
+    updateSaturation();
   };
 
   var updateScale = function () {
     var scale = parseInt(elScaleValue.value, 10);
 
-    scale = normalizeScale(scale);
+    scale = window.utils.normalize(scale, SCALE_MIN, SCALE_MAX);
 
     if (scale !== state.scale) {
       state.scale = scale;
@@ -192,19 +221,63 @@
     }
   };
 
-  var normalizeScale = function (scale) {
-    if (scale < SCALE_MIN) {
-      scale = SCALE_MIN;
-    } else if (scale > SCALE_MAX) {
-      scale = SCALE_MAX;
-    }
+  var updateEffect = function () {
+    var elActiveEffectRadio = getActiveEffectRadio();
+    var effectParams = EFFECTS[elActiveEffectRadio.value];
 
-    return scale;
+    if (state.effect !== elActiveEffectRadio.value) {
+      state.effect = effectParams ? elActiveEffectRadio.value : null;
+      elSaturation.classList.toggle('hidden', !state.effect);
+      setSaturation(SATURATION_INITIAL);
+      updateFilter();
+    }
   };
 
-  var updateForm = function () {
-    updateEffect();
-    updateScale();
+  var updateSaturation = function () {
+    var saturation = parseInt(elSaturationValue.value, 10);
+
+    saturation = window.utils.normalize(saturation, SATURATION_MIN, SATURATION_MAX);
+
+    if (saturation !== state.saturation) {
+      state.saturation = saturation;
+      elSaturationDepth.style.width = saturation + '%';
+      elSaturationPin.style.left = saturation + '%';
+      updateFilter();
+    }
+  };
+
+  var updateFilter = function () {
+    var effectParams = EFFECTS[state.effect];
+    var filter = '';
+    var effectSaturationValue = null;
+
+    if (effectParams) {
+      effectSaturationValue = effectParams.min + (effectParams.max - effectParams.min) * state.saturation / 100;
+      filter = effectParams.fn + '(' + effectSaturationValue + effectParams.measure + ')';
+    }
+
+    if (filter !== state.filter) {
+      state.filter = filter;
+      elImgUploadPreview.style.filter = filter;
+    }
+  };
+
+  var setScale = function (scale) {
+    scale = window.utils.normalize(scale, SCALE_MIN, SCALE_MAX);
+
+    if (scale !== state.scale) {
+      elScaleValue.value = scale + '%';
+      updateScale();
+    }
+  };
+
+  var setSaturation = function (saturation) {
+    saturation = window.utils.normalize(saturation, SATURATION_MIN, SATURATION_MAX);
+
+    if (saturation !== state.saturation) {
+      elSaturationValue.value = saturation;
+      updateSaturation();
+    }
   };
 
   var getActiveEffectRadio = function () {
@@ -225,6 +298,11 @@
   var elImgUploadOverlay = elImgUploadForm.querySelector('.img-upload__overlay');
   var elImgUploadCancel = elImgUploadOverlay.querySelector('.img-upload__cancel');
   var elEffectRadios = elImgUploadOverlay.querySelectorAll('.effects__radio');
+  var elSaturation = elImgUploadOverlay.querySelector('.effect-level');
+  var elSaturationValue = elSaturation.querySelector('.effect-level__value');
+  var elSaturationLine = elSaturation.querySelector('.effect-level__line');
+  var elSaturationDepth = elSaturation.querySelector('.effect-level__depth');
+  var elSaturationPin = elSaturation.querySelector('.effect-level__pin');
   var elImgUploadPreview = elImgUploadOverlay.querySelector('.img-upload__preview');
   var elScaleValue = elImgUploadOverlay.querySelector('.scale__control--value');
   var elScaleSmaller = elImgUploadOverlay.querySelector('.scale__control--smaller');
@@ -232,7 +310,9 @@
   var state = {
     isOpened: false,
     effect: null,
-    scale: SCALE_INITIAL
+    scale: SCALE_INITIAL,
+    saturation: SATURATION_INITIAL,
+    filter: ''
   };
 
   elImgUploadForm.addEventListener('change', formChangeHandler);
@@ -249,6 +329,20 @@
     },
     isEscPressed: function (evt) {
       return evt.keyCode === ESC_KEYCODE;
+    }
+  };
+})();
+
+(function () {
+  window.utils = {
+    normalize: function (value, min, max) {
+      if (value < min) {
+        value = min;
+      } else if (value > max) {
+        value = max;
+      }
+
+      return value;
     }
   };
 })();
