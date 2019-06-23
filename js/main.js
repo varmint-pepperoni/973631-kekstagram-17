@@ -136,13 +136,13 @@
   var SATURATION_MAX = 100;
 
   var formChangeHandler = function (e) {
-    if (e.target === elUploadFile) {
+    if (e.target.classList.contains('img-upload__input')) {
       openForm();
     } else if (e.target.classList.contains('effects__radio')) {
       updateEffect();
-    } else if (e.target === elScaleValue) {
+    } else if (e.target.classList.contains('scale__control--value')) {
       updateScale();
-    } else if (e.target === elSaturationValue) {
+    } else if (e.target.classList.contains('effect-level__value')) {
       updateSaturation();
     }
   };
@@ -293,7 +293,6 @@
     return radio;
   };
 
-  var elUploadFile = document.querySelector('#upload-file');
   var elImgUploadForm = document.querySelector('.img-upload__form');
   var elImgUploadOverlay = elImgUploadForm.querySelector('.img-upload__overlay');
   var elImgUploadCancel = elImgUploadOverlay.querySelector('.img-upload__cancel');
