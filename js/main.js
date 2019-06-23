@@ -221,7 +221,7 @@
 
     if (scale !== state.scale) {
       state.scale = scale;
-      elImgUploadPreview.style.transform = 'scale(' + (scale / 100) + ')';
+      elImgUploadPreviewImg.style.transform = 'scale(' + (scale / 100) + ')';
     }
   };
 
@@ -307,6 +307,7 @@
   var elSaturationDepth = elSaturation.querySelector('.effect-level__depth');
   var elSaturationPin = elSaturation.querySelector('.effect-level__pin');
   var elImgUploadPreview = elImgUploadOverlay.querySelector('.img-upload__preview');
+  var elImgUploadPreviewImg = elImgUploadPreview.querySelector('img');
   var elScaleValue = elImgUploadOverlay.querySelector('.scale__control--value');
   var elScaleSmaller = elImgUploadOverlay.querySelector('.scale__control--smaller');
   var elScaleBigger = elImgUploadOverlay.querySelector('.scale__control--bigger');
