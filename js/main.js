@@ -230,7 +230,7 @@
     var effectParams = effects[elActiveEffectRadio.value];
 
     if (state.effect !== elActiveEffectRadio.value) {
-      state.effect = effectParams ? elActiveEffectRadio.value : null;
+      state.effect = effectParams ? elActiveEffectRadio.value : '';
       elSaturation.classList.toggle('hidden', !state.effect);
       setSaturation(SATURATION_INITIAL);
       updateFilter();
@@ -312,7 +312,7 @@
   var elScaleBigger = elImgUploadOverlay.querySelector('.scale__control--bigger');
   var state = {
     isFormOpened: false,
-    effect: null,
+    effect: '',
     scale: SCALE_INITIAL,
     saturation: SATURATION_INITIAL,
     filter: ''
