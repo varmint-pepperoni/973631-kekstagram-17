@@ -95,7 +95,7 @@
 })();
 
 (function () {
-  var EFFECTS = {
+  var effects = {
     chrome: {
       fn: 'grayscale',
       min: 0,
@@ -223,7 +223,7 @@
 
   var updateEffect = function () {
     var elActiveEffectRadio = getActiveEffectRadio();
-    var effectParams = EFFECTS[elActiveEffectRadio.value];
+    var effectParams = effects[elActiveEffectRadio.value];
 
     if (state.effect !== elActiveEffectRadio.value) {
       state.effect = effectParams ? elActiveEffectRadio.value : null;
@@ -247,7 +247,7 @@
   };
 
   var updateFilter = function () {
-    var effectParams = EFFECTS[state.effect];
+    var effectParams = effects[state.effect];
     var filter = '';
     var effectSaturationValue = null;
 
