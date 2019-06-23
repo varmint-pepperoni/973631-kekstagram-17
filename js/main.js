@@ -267,19 +267,19 @@
   };
 
   var setScale = function (scale) {
-    scale = window.utils.getDiapozoneValue(scale, SCALE_MIN, SCALE_MAX);
+    var correctScale = window.utils.getDiapozoneValue(scale, SCALE_MIN, SCALE_MAX);
 
-    if (scale !== state.scale) {
-      elScaleValue.value = scale + '%';
+    if (correctScale !== state.scale) {
+      elScaleValue.value = correctScale + '%';
       updateScale();
     }
   };
 
   var setSaturation = function (saturation) {
-    saturation = window.utils.getDiapozoneValue(saturation, SATURATION_MIN, SATURATION_MAX);
+    var correctSaturation = window.utils.getDiapozoneValue(saturation, SATURATION_MIN, SATURATION_MAX);
 
-    if (saturation !== state.saturation) {
-      elSaturationValue.value = saturation;
+    if (correctSaturation !== state.saturation) {
+      elSaturationValue.value = correctSaturation;
       updateSaturation();
     }
   };
