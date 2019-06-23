@@ -134,11 +134,13 @@
   var SATURATION_INITIAL = 100;
   var SATURATION_MIN = 0;
   var SATURATION_MAX = 100;
+  var EFFECT_INITIAL = 'none';
 
   var formChangeHandler = function (e) {
     if (e.target.classList.contains('img-upload__input')) {
       openForm();
     } else if (e.target.classList.contains('effects__radio')) {
+      state.effectActiveRadioValue = e.target.value;
       updateEffect();
     } else if (e.target.classList.contains('scale__control--value')) {
       updateScale();
@@ -148,6 +150,7 @@
   };
 
   var formResetHandler = function () {
+    state.effectActiveRadioValue = EFFECT_INITIAL;
     // Обновляем форму после всплытия события.
     requestAnimationFrame(updateForm);
   };
@@ -226,11 +229,10 @@
   };
 
   var updateEffect = function () {
-    var elActiveEffectRadio = getActiveEffectRadio();
-    var effectParams = effects[elActiveEffectRadio.value];
+    var effectParams = effects[state.effectActiveRadioValue];
 
-    if (state.effect !== elActiveEffectRadio.value) {
-      state.effect = effectParams ? elActiveEffectRadio.value : '';
+    if (state.effect !== state.effectActiveRadioValue) {
+      state.effect = effectParams ? state.effectActiveRadioValue : '';
       elSaturation.classList.toggle('hidden', !state.effect);
       setSaturation(SATURATION_INITIAL);
       updateFilter();
@@ -284,23 +286,9 @@
     }
   };
 
-  var getActiveEffectRadio = function () {
-    var radio = null;
-
-    for (var i = 0; i < elEffectRadios.length; i++) {
-      if (elEffectRadios[i].checked) {
-        radio = elEffectRadios[i];
-        break;
-      }
-    }
-
-    return radio;
-  };
-
   var elImgUploadForm = document.querySelector('.img-upload__form');
   var elImgUploadOverlay = elImgUploadForm.querySelector('.img-upload__overlay');
   var elImgUploadCancel = elImgUploadOverlay.querySelector('.img-upload__cancel');
-  var elEffectRadios = elImgUploadOverlay.querySelectorAll('.effects__radio');
   var elSaturation = elImgUploadOverlay.querySelector('.effect-level');
   var elSaturationValue = elSaturation.querySelector('.effect-level__value');
   var elSaturationLine = elSaturation.querySelector('.effect-level__line');
@@ -314,6 +302,7 @@
   var state = {
     isFormOpened: false,
     effect: '',
+    effectActiveRadioValue: EFFECT_INITIAL,
     scale: SCALE_INITIAL,
     saturation: SATURATION_INITIAL,
     filter: ''
