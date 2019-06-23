@@ -158,7 +158,11 @@
   };
 
   var documentKeydownHandler = function (e) {
-    if (window.keyboard.isEscPressed(e)) {
+    var isEsc = window.keyboard.isEscPressed(e);
+    var isHashtags = e.target.classList.contains('text__hashtags');
+    var isDescription = e.target.classList.contains('text__description');
+
+    if (isEsc && !isHashtags && !isDescription) {
       closeForm();
     }
   };
