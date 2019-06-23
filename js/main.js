@@ -180,19 +180,19 @@
   };
 
   var openForm = function () {
-    if (!state.isOpened) {
+    if (!state.isFormOpened) {
       elImgUploadOverlay.classList.remove('hidden');
       elImgUploadCancel.addEventListener('click', imgUploadCancelClickHandler);
       document.addEventListener('keydown', documentKeydownHandler);
       elScaleSmaller.addEventListener('click', scaleSmallerClickHandler);
       elScaleBigger.addEventListener('click', scaleBiggerClickHandler);
       elSaturationLine.addEventListener('mouseup', saturationLineMouseupHandler);
-      state.isOpened = true;
+      state.isFormOpened = true;
     }
   };
 
   var closeForm = function () {
-    if (state.isOpened) {
+    if (state.isFormOpened) {
       elImgUploadOverlay.classList.add('hidden');
       elImgUploadCancel.removeEventListener('click', imgUploadCancelClickHandler);
       document.removeEventListener('keydown', documentKeydownHandler);
@@ -200,7 +200,7 @@
       elScaleBigger.removeEventListener('click', scaleBiggerClickHandler);
       elSaturationLine.removeEventListener('mouseup', saturationLineMouseupHandler);
       elImgUploadForm.reset();
-      state.isOpened = false;
+      state.isFormOpened = false;
     }
   };
 
@@ -308,7 +308,7 @@
   var elScaleSmaller = elImgUploadOverlay.querySelector('.scale__control--smaller');
   var elScaleBigger = elImgUploadOverlay.querySelector('.scale__control--bigger');
   var state = {
-    isOpened: false,
+    isFormOpened: false,
     effect: null,
     scale: SCALE_INITIAL,
     saturation: SATURATION_INITIAL,
