@@ -178,7 +178,23 @@
     setScale(state.scale + SCALE_STEP);
   };
 
-  var saturationLineMouseupHandler = function (e) {
+  var saturationLineMousedownHandler = function (e) {
+    setSaturationByEvent(e);
+    window.addEventListener('mousemove', windowMousemoveHandler);
+    window.addEventListener('mouseup', windowMouseupHandler);
+  };
+
+  var windowMousemoveHandler = function (e) {
+    setSaturationByEvent(e);
+  };
+
+  var windowMouseupHandler = function (e) {
+    setSaturationByEvent(e);
+    window.removeEventListener('mousemove', windowMousemoveHandler);
+    window.removeEventListener('mouseup', windowMouseupHandler);
+  };
+
+  var setSaturationByEvent = function (e) {
     var boundingClientRect = elSaturationLine.getBoundingClientRect();
     var xDiff = e.clientX - boundingClientRect.x;
     var saturation = Math.round(xDiff / boundingClientRect.width * 100);
@@ -193,7 +209,7 @@
       document.addEventListener('keydown', documentKeydownHandler);
       elScaleSmaller.addEventListener('click', scaleSmallerClickHandler);
       elScaleBigger.addEventListener('click', scaleBiggerClickHandler);
-      elSaturationLine.addEventListener('mouseup', saturationLineMouseupHandler);
+      elSaturationLine.addEventListener('mousedown', saturationLineMousedownHandler);
       state.isFormOpened = true;
     }
   };
@@ -205,7 +221,7 @@
       document.removeEventListener('keydown', documentKeydownHandler);
       elScaleSmaller.removeEventListener('click', scaleSmallerClickHandler);
       elScaleBigger.removeEventListener('click', scaleBiggerClickHandler);
-      elSaturationLine.removeEventListener('mouseup', saturationLineMouseupHandler);
+      elSaturationLine.removeEventListener('mousedown', saturationLineMousedownHandler);
       elImgUploadForm.reset();
       state.isFormOpened = false;
     }
