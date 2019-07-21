@@ -13,11 +13,11 @@
     var photos = [];
 
     for (var i = 0; i < PHOTOS_COUNT; i++) {
-      photos[i] = {
+      photos.push({
         url: 'photos/' + (i + 1) + '.jpg',
         likes: window.utils.getRandomNum(MIN_LIKES, MAX_LIKES),
         comments: generateComments(window.utils.getRandomNum(MIN_COMMENTS, MAX_COMMENTS))
-      };
+      });
     }
 
     return photos;
