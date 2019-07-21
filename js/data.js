@@ -77,9 +77,9 @@
   var insertElPhotos = function (arr) {
     var fragment = document.createDocumentFragment();
 
-    for (var i = 0; i < arr.length; i++) {
-      fragment.appendChild(arr[i]);
-    }
+    arr.forEach(function (elPhoto) {
+      fragment.appendChild(elPhoto);
+    });
 
     elPhotosContainer.appendChild(fragment);
   };
