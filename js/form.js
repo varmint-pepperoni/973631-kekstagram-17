@@ -67,7 +67,7 @@
   };
 
   var documentKeydownHandler = function (e) {
-    var isEsc = window.keyboard.isEscPressed(e);
+    var isEsc = window.keyboardPress.isEsc(e);
     var isHashtags = e.target.classList.contains('text__hashtags');
     var isDescription = e.target.classList.contains('text__description');
 
