@@ -204,26 +204,34 @@
 
   var openForm = function () {
     if (!state.isFormOpened) {
-      elImgUploadOverlay.classList.remove('hidden');
-      elImgUploadCancel.addEventListener('click', imgUploadCancelClickHandler);
-      document.addEventListener('keydown', documentKeydownHandler);
-      elScaleSmaller.addEventListener('click', scaleSmallerClickHandler);
-      elScaleBigger.addEventListener('click', scaleBiggerClickHandler);
-      elSaturationLine.addEventListener('mousedown', saturationLineMousedownHandler);
       state.isFormOpened = true;
+      elImgUploadOverlay.classList.remove('hidden');
+      toggleFormHandlers();
     }
   };
 
   var closeForm = function () {
     if (state.isFormOpened) {
+      state.isFormOpened = false;
       elImgUploadOverlay.classList.add('hidden');
+      toggleFormHandlers();
+      elImgUploadForm.reset();
+    }
+  };
+
+  var toggleFormHandlers = function () {
+    if (state.isFormOpened) {
+      elImgUploadCancel.addEventListener('click', imgUploadCancelClickHandler);
+      document.addEventListener('keydown', documentKeydownHandler);
+      elScaleSmaller.addEventListener('click', scaleSmallerClickHandler);
+      elScaleBigger.addEventListener('click', scaleBiggerClickHandler);
+      elSaturationLine.addEventListener('mousedown', saturationLineMousedownHandler);
+    } else {
       elImgUploadCancel.removeEventListener('click', imgUploadCancelClickHandler);
       document.removeEventListener('keydown', documentKeydownHandler);
       elScaleSmaller.removeEventListener('click', scaleSmallerClickHandler);
       elScaleBigger.removeEventListener('click', scaleBiggerClickHandler);
       elSaturationLine.removeEventListener('mousedown', saturationLineMousedownHandler);
-      elImgUploadForm.reset();
-      state.isFormOpened = false;
     }
   };
 
