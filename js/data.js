@@ -2,6 +2,12 @@
 
 (function () {
   var PHOTOS_COUNT = 25;
+  var MIN_LIKES = 15;
+  var MAX_LIKES = 200;
+  var MIN_COMMENTS = 0;
+  var MAX_COMMENTS = 5;
+  var FIRST_AVATAR_INDEX = 1;
+  var LAST_AVATAR_INDEX = 6;
 
   var generatePhotos = function () {
     var photos = [];
@@ -9,8 +15,8 @@
     for (var i = 0; i < PHOTOS_COUNT; i++) {
       photos[i] = {
         url: 'photos/' + (i + 1) + '.jpg',
-        likes: getRandomNum(15, 200),
-        comments: generateComments(getRandomNum(0, 5))
+        likes: window.utils.getRandomNum(MIN_LIKES, MAX_LIKES),
+        comments: generateComments(window.utils.getRandomNum(MIN_COMMENTS, MAX_COMMENTS))
       };
     }
 
@@ -39,18 +45,10 @@
     var names = ['Артём', 'Мария', 'Василий', 'Лолита', 'Аркадий', 'Екатерина', 'Женя', 'Маша'];
 
     return {
-      avatar: 'img/avatar-' + getRandomNum(1, 6) + '.svg',
-      message: getRandomArrValue(messages),
-      name: getRandomArrValue(names)
+      avatar: 'img/avatar-' + window.utils.getRandomNum(FIRST_AVATAR_INDEX, LAST_AVATAR_INDEX) + '.svg',
+      message: window.utils.getRandomArrValue(messages),
+      name: window.utils.getRandomArrValue(names)
     };
-  };
-
-  function getRandomNum(min, max) {
-    return Math.floor(Math.random() * (max - min)) + min + 1;
-  }
-
-  var getRandomArrValue = function (arr) {
-    return arr[getRandomNum(0, arr.length - 1)];
   };
 
   var createElPhoto = function (photo) {
