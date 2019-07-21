@@ -1,9 +1,9 @@
 'use strict';
 
-(function() {
+(function () {
   var PHOTOS_COUNT = 25;
 
-  var generatePhotos = function() {
+  var generatePhotos = function () {
     var photos = [];
 
     for (var i = 0; i < PHOTOS_COUNT; i++) {
@@ -17,7 +17,7 @@
     return photos;
   };
 
-  var generateComments = function(count) {
+  var generateComments = function (count) {
     var comments = [];
 
     for (var i = 0; i < count; i++) {
@@ -27,7 +27,7 @@
     return comments;
   };
 
-  var generateComment = function() {
+  var generateComment = function () {
     var messages = [
       'Всё отлично!',
       'В целом всё неплохо. Но не всё.',
@@ -45,15 +45,15 @@
     };
   };
 
-  function getRandomNum (min, max) {
+  function getRandomNum(min, max) {
     return Math.floor(Math.random() * (max - min)) + min + 1;
   }
 
-  var getRandomArrValue = function(arr) {
+  var getRandomArrValue = function (arr) {
     return arr[getRandomNum(0, arr.length - 1)];
   };
 
-  var createElPhoto = function(photo) {
+  var createElPhoto = function (photo) {
     var elPhoto = elPhotoTemplate.cloneNode(true);
     var elImg = elPhoto.querySelector('.picture__img');
     var elLikes = elPhoto.querySelector('.picture__likes');
@@ -66,7 +66,7 @@
     return elPhoto;
   };
 
-  var createElPhotos = function(arr) {
+  var createElPhotos = function (arr) {
     var arrElPhotos = [];
 
     for (var i = 0; i < arr.length; i++) {
@@ -76,7 +76,7 @@
     return arrElPhotos;
   };
 
-  var insertElPhotos = function(arr) {
+  var insertElPhotos = function (arr) {
     var fragment = document.createDocumentFragment();
 
     for (var i = 0; i < arr.length; i++) {
