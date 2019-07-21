@@ -180,8 +180,8 @@
 
   var saturationLineMousedownHandler = function (e) {
     setSaturationByEvent(e);
-    window.addEventListener('mousemove', windowMousemoveHandler);
-    window.addEventListener('mouseup', windowMouseupHandler);
+    document.addEventListener('mousemove', windowMousemoveHandler);
+    document.addEventListener('mouseup', windowMouseupHandler);
   };
 
   var windowMousemoveHandler = function (e) {
@@ -190,8 +190,8 @@
 
   var windowMouseupHandler = function (e) {
     setSaturationByEvent(e);
-    window.removeEventListener('mousemove', windowMousemoveHandler);
-    window.removeEventListener('mouseup', windowMouseupHandler);
+    document.removeEventListener('mousemove', windowMousemoveHandler);
+    document.removeEventListener('mouseup', windowMouseupHandler);
   };
 
   var setSaturationByEvent = function (e) {
