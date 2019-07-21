@@ -1,100 +1,6 @@
 'use strict';
 
 (function () {
-  var PHOTOS_COUNT = 25;
-
-  var generatePhotos = function () {
-    var photos = [];
-
-    for (var i = 0; i < PHOTOS_COUNT; i++) {
-      photos[i] = {
-        url: 'photos/' + (i + 1) + '.jpg',
-        likes: getRandomNum(15, 200),
-        comments: generateComments(getRandomNum(0, 5))
-      };
-    }
-
-    return photos;
-  };
-
-  var generateComments = function (count) {
-    var comments = [];
-
-    for (var i = 0; i < count; i++) {
-      comments[i] = generateComment();
-    }
-
-    return comments;
-  };
-
-  var generateComment = function () {
-    var messages = [
-      'Всё отлично!',
-      'В целом всё неплохо. Но не всё.',
-      'Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.',
-      'Моя бабушка случайно чихнула с фотоаппаратом в руках и у неё получилась фотография лучше.',
-      'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.',
-      'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'
-    ];
-    var names = ['Артём', 'Мария', 'Василий', 'Лолита', 'Аркадий', 'Екатерина', 'Женя', 'Маша'];
-
-    return {
-      avatar: 'img/avatar-' + getRandomNum(1, 6) + '.svg',
-      message: getRandomArrValue(messages),
-      name: getRandomArrValue(names)
-    };
-  };
-
-  function getRandomNum(min, max) {
-    return Math.floor(Math.random() * (max - min)) + min + 1;
-  }
-
-  var getRandomArrValue = function (arr) {
-    return arr[getRandomNum(0, arr.length - 1)];
-  };
-
-  var createElPhoto = function (photo) {
-    var elPhoto = elPhotoTemplate.cloneNode(true);
-    var elImg = elPhoto.querySelector('.picture__img');
-    var elLikes = elPhoto.querySelector('.picture__likes');
-    var elComments = elPhoto.querySelector('.picture__comments');
-
-    elImg.src = photo.url;
-    elLikes.textContent = photo.likes;
-    elComments.textContent = photo.comments.length;
-
-    return elPhoto;
-  };
-
-  var createElPhotos = function (arr) {
-    var arrElPhotos = [];
-
-    for (var i = 0; i < arr.length; i++) {
-      arrElPhotos[i] = createElPhoto(arr[i]);
-    }
-
-    return arrElPhotos;
-  };
-
-  var insertElPhotos = function (arr) {
-    var fragment = document.createDocumentFragment();
-
-    for (var i = 0; i < arr.length; i++) {
-      fragment.appendChild(arr[i]);
-    }
-
-    elPhotosContainer.appendChild(fragment);
-  };
-
-  var elPhotoTemplate = document.querySelector('#picture').content;
-  var elPhotosContainer = document.querySelector('.pictures');
-  var photosData = generatePhotos();
-  var arrElPhotos = createElPhotos(photosData);
-
-  insertElPhotos(arrElPhotos);
-})();
-
-(function () {
   var effects = {
     chrome: {
       fn: 'grayscale',
@@ -161,7 +67,7 @@
   };
 
   var documentKeydownHandler = function (e) {
-    var isEsc = window.keyboard.isEscPressed(e);
+    var isEsc = window.keyboardPress.isEsc(e);
     var isHashtags = e.target.classList.contains('text__hashtags');
     var isDescription = e.target.classList.contains('text__description');
 
@@ -180,8 +86,8 @@
 
   var saturationLineMousedownHandler = function (e) {
     setSaturationByEvent(e);
-    window.addEventListener('mousemove', windowMousemoveHandler);
-    window.addEventListener('mouseup', windowMouseupHandler);
+    document.addEventListener('mousemove', windowMousemoveHandler);
+    document.addEventListener('mouseup', windowMouseupHandler);
   };
 
   var windowMousemoveHandler = function (e) {
@@ -190,8 +96,8 @@
 
   var windowMouseupHandler = function (e) {
     setSaturationByEvent(e);
-    window.removeEventListener('mousemove', windowMousemoveHandler);
-    window.removeEventListener('mouseup', windowMouseupHandler);
+    document.removeEventListener('mousemove', windowMousemoveHandler);
+    document.removeEventListener('mouseup', windowMouseupHandler);
   };
 
   var setSaturationByEvent = function (e) {
@@ -204,26 +110,39 @@
 
   var openForm = function () {
     if (!state.isFormOpened) {
-      elImgUploadOverlay.classList.remove('hidden');
-      elImgUploadCancel.addEventListener('click', imgUploadCancelClickHandler);
-      document.addEventListener('keydown', documentKeydownHandler);
-      elScaleSmaller.addEventListener('click', scaleSmallerClickHandler);
-      elScaleBigger.addEventListener('click', scaleBiggerClickHandler);
-      elSaturationLine.addEventListener('mousedown', saturationLineMousedownHandler);
-      state.isFormOpened = true;
+      toggleForm();
     }
   };
 
   var closeForm = function () {
     if (state.isFormOpened) {
-      elImgUploadOverlay.classList.add('hidden');
+      toggleForm();
+    }
+  };
+
+  var toggleForm = function () {
+    state.isFormOpened = !state.isFormOpened;
+    elImgUploadOverlay.classList.toggle('hidden', !state.isFormOpened);
+    toggleFormHandlers();
+
+    if (!state.isFormOpened) {
+      elImgUploadForm.reset();
+    }
+  };
+
+  var toggleFormHandlers = function () {
+    if (state.isFormOpened) {
+      elImgUploadCancel.addEventListener('click', imgUploadCancelClickHandler);
+      document.addEventListener('keydown', documentKeydownHandler);
+      elScaleSmaller.addEventListener('click', scaleSmallerClickHandler);
+      elScaleBigger.addEventListener('click', scaleBiggerClickHandler);
+      elSaturationLine.addEventListener('mousedown', saturationLineMousedownHandler);
+    } else {
       elImgUploadCancel.removeEventListener('click', imgUploadCancelClickHandler);
       document.removeEventListener('keydown', documentKeydownHandler);
       elScaleSmaller.removeEventListener('click', scaleSmallerClickHandler);
       elScaleBigger.removeEventListener('click', scaleBiggerClickHandler);
       elSaturationLine.removeEventListener('mousedown', saturationLineMousedownHandler);
-      elImgUploadForm.reset();
-      state.isFormOpened = false;
     }
   };
 
@@ -326,32 +245,4 @@
 
   elImgUploadForm.addEventListener('change', formChangeHandler);
   elImgUploadForm.addEventListener('reset', formResetHandler);
-})();
-
-(function () {
-  var ENTER_KEYCODE = 13;
-  var ESC_KEYCODE = 27;
-
-  window.keyboard = {
-    isEnterPressed: function (evt) {
-      return evt.keyCode === ENTER_KEYCODE;
-    },
-    isEscPressed: function (evt) {
-      return evt.keyCode === ESC_KEYCODE;
-    }
-  };
-})();
-
-(function () {
-  window.utils = {
-    getDiapozoneValue: function (value, min, max) {
-      if (value < min) {
-        value = min;
-      } else if (value > max) {
-        value = max;
-      }
-
-      return value;
-    }
-  };
 })();
