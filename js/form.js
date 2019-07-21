@@ -110,17 +110,22 @@
 
   var openForm = function () {
     if (!state.isFormOpened) {
-      state.isFormOpened = true;
-      elImgUploadOverlay.classList.remove('hidden');
-      toggleFormHandlers();
+      toggleForm();
     }
   };
 
   var closeForm = function () {
     if (state.isFormOpened) {
-      state.isFormOpened = false;
-      elImgUploadOverlay.classList.add('hidden');
-      toggleFormHandlers();
+      toggleForm();
+    }
+  };
+
+  var toggleForm = function () {
+    state.isFormOpened = !state.isFormOpened;
+    elImgUploadOverlay.classList.toggle('hidden', !state.isFormOpened);
+    toggleFormHandlers();
+
+    if (!state.isFormOpened) {
       elImgUploadForm.reset();
     }
   };
