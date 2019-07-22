@@ -1,56 +1,6 @@
 'use strict';
 
 (function () {
-  var PHOTOS_COUNT = 25;
-  var MIN_LIKES = 15;
-  var MAX_LIKES = 200;
-  var MIN_COMMENTS = 0;
-  var MAX_COMMENTS = 5;
-  var FIRST_AVATAR_INDEX = 1;
-  var LAST_AVATAR_INDEX = 6;
-
-  var generatePhotos = function () {
-    var photos = [];
-
-    for (var i = 0; i < PHOTOS_COUNT; i++) {
-      photos.push({
-        url: 'photos/' + (i + 1) + '.jpg',
-        likes: window.utils.getRandomNum(MIN_LIKES, MAX_LIKES),
-        comments: generateComments(window.utils.getRandomNum(MIN_COMMENTS, MAX_COMMENTS))
-      });
-    }
-
-    return photos;
-  };
-
-  var generateComments = function (count) {
-    var comments = [];
-
-    for (var i = 0; i < count; i++) {
-      comments[i] = generateComment();
-    }
-
-    return comments;
-  };
-
-  var generateComment = function () {
-    var messages = [
-      'Всё отлично!',
-      'В целом всё неплохо. Но не всё.',
-      'Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.',
-      'Моя бабушка случайно чихнула с фотоаппаратом в руках и у неё получилась фотография лучше.',
-      'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.',
-      'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'
-    ];
-    var names = ['Артём', 'Мария', 'Василий', 'Лолита', 'Аркадий', 'Екатерина', 'Женя', 'Маша'];
-
-    return {
-      avatar: 'img/avatar-' + window.utils.getRandomNum(FIRST_AVATAR_INDEX, LAST_AVATAR_INDEX) + '.svg',
-      message: window.utils.getRandomArrValue(messages),
-      name: window.utils.getRandomArrValue(names)
-    };
-  };
-
   var createElPhoto = function (photo) {
     var elPhoto = elPhotoTemplate.cloneNode(true);
     var elImg = elPhoto.querySelector('.picture__img');
@@ -84,10 +34,27 @@
     elPhotosContainer.appendChild(fragment);
   };
 
+  var successPhotosLoadHandler = function (photos) {
+    var arrElPhotos = createElPhotos(photos);
+
+    insertElPhotos(arrElPhotos);
+  };
+
+  var ajaxErrorHandler = function (errorMessage) {
+    var node = document.createElement('div');
+
+    node.style = 'z-index: 100; margin: 0 auto; text-align: center; background-color: red;';
+    node.style.position = 'absolute';
+    node.style.left = 0;
+    node.style.right = 0;
+    node.style.fontSize = '30px';
+
+    node.textContent = errorMessage;
+    document.body.insertAdjacentElement('afterbegin', node);
+  };
+
   var elPhotoTemplate = document.querySelector('#picture').content;
   var elPhotosContainer = document.querySelector('.pictures');
-  var photosData = generatePhotos();
-  var arrElPhotos = createElPhotos(photosData);
 
-  insertElPhotos(arrElPhotos);
+  window.backend.load(successPhotosLoadHandler, ajaxErrorHandler);
 })();
