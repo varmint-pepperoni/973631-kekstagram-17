@@ -58,10 +58,13 @@
   };
 
   var getFilteredPhotos = function () {
-    if (filterID === 'filter-new') {
-      return getNewPhotos();
-    } else if (filterID === 'filter-discussed') {
-      return getDiscussedPhotos();
+    var filterIDToFilterFn = {
+      'filter-new': getNewPhotos,
+      'filter-discussed': getDiscussedPhotos
+    };
+
+    if (filterIDToFilterFn[filterID]) {
+      return filterIDToFilterFn[filterID]();
     }
 
     return photos;
