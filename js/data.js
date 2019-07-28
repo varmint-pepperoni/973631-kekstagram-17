@@ -49,6 +49,7 @@
     photos = photosArray;
     redrawPhotos();
     showFilters();
+    showBigPhoto(photos[0]);
   };
 
   var redrawPhotos = function () {
@@ -116,6 +117,40 @@
     }
   };
 
+  var showBigPhoto = function (photo) {
+    elBigPictureImg.src = photo.url;
+    elLikesCount.textContent = photo.likes;
+    elCommentsCount.textContent = photo.comments.length;
+    elSocialComments.innerHTML = '';
+    insertComments(photo.comments);
+    elSocialCaption.textContent = photo.description;
+    elSocialCommentsCount.classList.add('visually-hidden');
+    elCommentsLoader.classList.add('visually-hidden');
+
+    elBigPicture.classList.remove('hidden');
+  };
+
+  var insertComments = function (comments) {
+    var fragment = document.createDocumentFragment();
+
+    comments.forEach(function (comment) {
+      fragment.appendChild(createElComment(comment));
+    });
+
+    elSocialComments.appendChild(fragment);
+  };
+
+  var createElComment = function (comment) {
+    var elComment = elCommentTemplate.cloneNode(true);
+    var elCommentAvatar = elComment.querySelector('.social__picture');
+    var elCommentText = elComment.querySelector('.social__text');
+
+    elCommentAvatar.src = comment.avatar;
+    elCommentText.textContent = comment.message;
+
+    return elComment;
+  };
+
   var setActiveFilter = function (newFilterID) {
     if (filterID !== newFilterID) {
       filterID = newFilterID;
@@ -145,6 +180,16 @@
   var elPhotosContainer = document.querySelector('.pictures');
   var elFilters = document.querySelector('.img-filters');
   var elFilterBtns = document.querySelectorAll('.img-filters__button');
+  var elBigPicture = document.querySelector('.big-picture');
+  var elBigPictureImgWrapper = elBigPicture.querySelector('.big-picture__img');
+  var elBigPictureImg = elBigPictureImgWrapper.querySelector('img');
+  var elLikesCount = elBigPicture.querySelector('.likes-count');
+  var elCommentsCount = elBigPicture.querySelector('.comments-count');
+  var elSocialComments = elBigPicture.querySelector('.social__comments');
+  var elSocialCommentsCount = elBigPicture.querySelector('.social__comment-count');
+  var elCommentsLoader = elBigPicture.querySelector('.comments-loader');
+  var elSocialCaption = elBigPicture.querySelector('.social__caption');
+  var elCommentTemplate = document.querySelector('#comment').content;
   var photos = [];
   var filterID = 'filter-popular';
   var updatePhotos = window.debounce(redrawPhotos);
