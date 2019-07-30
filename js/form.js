@@ -41,6 +41,8 @@
   var SATURATION_MIN = 0;
   var SATURATION_MAX = 100;
   var EFFECT_INITIAL = 'none';
+  var MAX_HASHTAGS_COUNT = 5;
+  var MAX_HASHTAG_LENGTH = 20;
 
   var formChangeHandler = function (e) {
     if (e.target.classList.contains('img-upload__input')) {
@@ -52,6 +54,8 @@
       updateScale();
     } else if (e.target.classList.contains('effect-level__value')) {
       updateSaturation();
+    } else if (e.target.classList.contains('text__hashtags')) {
+      checkHashtags();
     }
   };
 
@@ -59,6 +63,54 @@
     state.effectActiveRadioValue = EFFECT_INITIAL;
     // Обновляем форму после всплытия события.
     requestAnimationFrame(updateForm);
+  };
+
+  var formSubmitHandler = function (e) {
+    e.preventDefault();
+
+    var formData = new FormData(e.target);
+
+    window.backend.send(formData, successFormSubmitHandler, ajaxErrorHandler);
+  };
+
+  var checkHashtags = function () {
+    var hashtags = elTextHashtags.value;
+
+    hashtags = hashtags.trim();
+    hashtags = hashtags.replace(/ +/g, ' ');
+
+    var hashtagsArray = hashtags.split(' ');
+    var error = '';
+
+    if (hashtagsArray.length > MAX_HASHTAGS_COUNT) {
+      error = 'Нельзя указать больше ' + MAX_HASHTAGS_COUNT + ' хэш-тегов';
+    } else if (hashtags) {
+      hashtagsArray.every(function (hashtag, i) {
+        if (hashtag[0] !== '#') {
+          error = 'Хэш-тег должен начинаться с символа #';
+        } else if (hashtag === '#') {
+          error = 'Хэш-тег не может состоять только из символа #';
+        } else if (hashtag.indexOf('#', 1) !== -1) {
+          error = 'Хэш-теги должны разделяться пробелами';
+        } else if (hashtag.length > MAX_HASHTAG_LENGTH) {
+          error = 'Максимальная длина одного хэш-тега ' + MAX_HASHTAG_LENGTH + ' символов, включая решётку';
+        } else if (hashtagsArray.indexOf(hashtag, i + 1) !== -1) {
+          error = 'Хэш-теги не должны повторяться';
+        }
+
+        return !error;
+      });
+    }
+
+    elTextHashtags.setCustomValidity(error);
+  };
+
+  var successFormSubmitHandler = function () {
+    // Всё хорошо
+  };
+
+  var ajaxErrorHandler = function (errorMessage) {
+    window.error(errorMessage);
   };
 
   var imgUploadCancelClickHandler = function (e) {
@@ -234,6 +286,7 @@
   var elScaleValue = elImgUploadOverlay.querySelector('.scale__control--value');
   var elScaleSmaller = elImgUploadOverlay.querySelector('.scale__control--smaller');
   var elScaleBigger = elImgUploadOverlay.querySelector('.scale__control--bigger');
+  var elTextHashtags = elImgUploadForm.querySelector('.text__hashtags');
   var state = {
     isFormOpened: false,
     effect: '',
@@ -245,4 +298,5 @@
 
   elImgUploadForm.addEventListener('change', formChangeHandler);
   elImgUploadForm.addEventListener('reset', formResetHandler);
+  elImgUploadForm.addEventListener('submit', formSubmitHandler);
 })();
