@@ -106,11 +106,17 @@
   };
 
   var successFormSubmitHandler = function () {
-    // Всё хорошо
+    var dialogType = window.dialog.getTypes().SUCCESS;
+
+    closeForm();
+    window.dialog.show(dialogType);
   };
 
-  var ajaxErrorHandler = function (errorMessage) {
-    window.error(errorMessage);
+  var ajaxErrorHandler = function () {
+    var dialogType = window.dialog.getTypes().ERROR;
+
+    closeForm();
+    window.dialog.show(dialogType);
   };
 
   var imgUploadCancelClickHandler = function (e) {
