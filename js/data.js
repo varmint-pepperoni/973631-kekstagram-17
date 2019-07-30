@@ -2,6 +2,7 @@
 
 (function () {
   var NEW_PHOTOS_COUNT = 10;
+  var COMMENTS_PART_COUNT = 5;
 
   var createElPhoto = function (photo) {
     var elPhoto = elPhotoTemplate.cloneNode(true);
@@ -128,19 +129,20 @@
   };
 
   var showBigPhoto = function (photo) {
+    bigPhotoState.photo = photo;
+
     elBigPictureImg.src = photo.url;
     elLikesCount.textContent = photo.likes;
     elCommentsCount.textContent = photo.comments.length;
-    elSocialComments.innerHTML = '';
-    insertComments(photo.comments);
+    renderComments(photo.comments);
     elSocialCaption.textContent = photo.description;
     elSocialCommentsCount.classList.add('visually-hidden');
-    elCommentsLoader.classList.add('visually-hidden');
 
     elBigPicture.classList.remove('hidden');
 
     elBigPictureCancel.addEventListener('click', bigPictureCancelClickHandler);
     document.addEventListener('keydown', documentKeydownHandler);
+    elCommentsLoader.addEventListener('click', commentsLoaderClickHandler);
   };
 
   var documentKeydownHandler = function (e) {
@@ -156,10 +158,42 @@
   };
 
   var hideBigPhoto = function () {
+    bigPhotoState.photo = null;
+    bigPhotoState.renderedCommentsCount = 0;
+
     elBigPicture.classList.add('hidden');
 
     elBigPictureCancel.removeEventListener('click', bigPictureCancelClickHandler);
     document.removeEventListener('keydown', documentKeydownHandler);
+    elCommentsLoader.removeEventListener('click', commentsLoaderClickHandler);
+  };
+
+  var renderComments = function () {
+    var comments = bigPhotoState.photo.comments;
+    var renderedComments = comments.slice(0, COMMENTS_PART_COUNT);
+
+    bigPhotoState.renderedCommentsCount = renderedComments.length;
+
+    elSocialComments.innerHTML = '';
+    insertComments(renderedComments);
+    updateCommentsLoader();
+  };
+
+  var commentsLoaderClickHandler = function () {
+    var comments = bigPhotoState.photo.comments;
+    var renderedCount = bigPhotoState.renderedCommentsCount;
+    var renderedComments = comments.slice(renderedCount, renderedCount + COMMENTS_PART_COUNT);
+
+    bigPhotoState.renderedCommentsCount += renderedComments.length;
+    insertComments(renderedComments);
+    updateCommentsLoader();
+  };
+
+  var updateCommentsLoader = function () {
+    var renderedCount = bigPhotoState.renderedCommentsCount;
+    var allCount = bigPhotoState.photo.comments.length;
+
+    elCommentsLoader.classList.toggle('visually-hidden', renderedCount === allCount);
   };
 
   var insertComments = function (comments) {
@@ -237,6 +271,10 @@
   var photos = [];
   var filterID = 'filter-popular';
   var updatePhotos = window.debounce(redrawPhotos);
+  var bigPhotoState = {
+    photo: null,
+    renderedCommentsCount: 0
+  };
 
   window.backend.load(successPhotosLoadHandler, ajaxErrorHandler);
 })();
