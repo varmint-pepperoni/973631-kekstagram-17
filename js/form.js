@@ -106,52 +106,17 @@
   };
 
   var successFormSubmitHandler = function () {
+    var dialogType = window.dialog.getTypes().SUCCESS;
+
     closeForm();
-    showSuccessMessage();
+    window.dialog.show(dialogType);
   };
 
-  var showSuccessMessage = function () {
-    elSuccess = elSuccessTemplate.cloneNode(true).querySelector('.success');
-    elSuccessBtn = elSuccess.querySelector('.success__button');
+  var ajaxErrorHandler = function () {
+    var dialogType = window.dialog.getTypes().ERROR;
 
-    elMain.appendChild(elSuccess);
-
-    document.addEventListener('keydown', successMessageKeydownHandler);
-    elSuccessBtn.addEventListener('click', successBtnClickHandler);
-    elSuccess.addEventListener('click', successMessageClickHandler);
-  };
-
-  var closeSuccessMessage = function () {
-    if (elSuccess) {
-      document.removeEventListener('keydown', successMessageKeydownHandler);
-      elSuccessBtn.removeEventListener('click', successBtnClickHandler);
-      elSuccess.removeEventListener('click', successMessageClickHandler);
-
-      elMain.removeChild(elSuccess);
-
-      elSuccess = null;
-      elSuccessBtn = null;
-    }
-  };
-
-  var successMessageKeydownHandler = function (e) {
-    if (window.keyboardPress.isEsc(e)) {
-      closeSuccessMessage();
-    }
-  };
-
-  var successMessageClickHandler = function (e) {
-    if (!e.target.closest('.success__inner')) {
-      closeSuccessMessage();
-    }
-  };
-
-  var successBtnClickHandler = function () {
-    closeSuccessMessage();
-  };
-
-  var ajaxErrorHandler = function (errorMessage) {
-    window.error(errorMessage);
+    closeForm();
+    window.dialog.show(dialogType);
   };
 
   var imgUploadCancelClickHandler = function (e) {
@@ -159,7 +124,7 @@
     closeForm();
   };
 
-  var formKeydownHandler = function (e) {
+  var documentKeydownHandler = function (e) {
     var isEsc = window.keyboardPress.isEsc(e);
     var isHashtags = e.target.classList.contains('text__hashtags');
     var isDescription = e.target.classList.contains('text__description');
@@ -226,13 +191,13 @@
   var toggleFormHandlers = function () {
     if (state.isFormOpened) {
       elImgUploadCancel.addEventListener('click', imgUploadCancelClickHandler);
-      document.addEventListener('keydown', formKeydownHandler);
+      document.addEventListener('keydown', documentKeydownHandler);
       elScaleSmaller.addEventListener('click', scaleSmallerClickHandler);
       elScaleBigger.addEventListener('click', scaleBiggerClickHandler);
       elSaturationLine.addEventListener('mousedown', saturationLineMousedownHandler);
     } else {
       elImgUploadCancel.removeEventListener('click', imgUploadCancelClickHandler);
-      document.removeEventListener('keydown', formKeydownHandler);
+      document.removeEventListener('keydown', documentKeydownHandler);
       elScaleSmaller.removeEventListener('click', scaleSmallerClickHandler);
       elScaleBigger.removeEventListener('click', scaleBiggerClickHandler);
       elSaturationLine.removeEventListener('mousedown', saturationLineMousedownHandler);
@@ -328,10 +293,6 @@
   var elScaleSmaller = elImgUploadOverlay.querySelector('.scale__control--smaller');
   var elScaleBigger = elImgUploadOverlay.querySelector('.scale__control--bigger');
   var elTextHashtags = elImgUploadForm.querySelector('.text__hashtags');
-  var elSuccessTemplate = document.querySelector('#success').content;
-  var elSuccess = null;
-  var elSuccessBtn = null;
-  var elMain = document.querySelector('main');
   var state = {
     isFormOpened: false,
     effect: '',
