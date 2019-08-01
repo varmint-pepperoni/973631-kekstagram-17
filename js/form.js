@@ -46,7 +46,16 @@
 
   var formChangeHandler = function (e) {
     if (e.target.classList.contains('img-upload__input')) {
-      openForm();
+      var file = e.target.files[0];
+
+      if (file) {
+        window.getImageURL(file, function (url) {
+          elImgUploadPreviewImg.src = url;
+          openForm();
+        }, function () {
+          window.dialog.show(window.dialog.getTypes().ERROR);
+        });
+      }
     } else if (e.target.classList.contains('effects__radio')) {
       state.effectActiveRadioValue = e.target.value;
       updateEffect();
