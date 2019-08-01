@@ -2,7 +2,7 @@
 
 (function () {
   window.utils = {
-    getDiapozoneValue: function (value, min, max) {
+    getRangeValue: function (value, min, max) {
       if (value < min) {
         value = min;
       } else if (value > max) {

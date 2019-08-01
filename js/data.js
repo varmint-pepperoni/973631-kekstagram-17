@@ -221,7 +221,7 @@
     if (filterID !== newFilterID) {
       filterID = newFilterID;
 
-      Array.prototype.forEach.call(elFilterBtns, function (elBtn) {
+      Array.prototype.forEach.call(elFilterButtons, function (elBtn) {
         elBtn.classList.toggle('img-filters__button--active', elBtn.id === filterID);
       });
 
@@ -256,7 +256,7 @@
   var elPhotoTemplate = document.querySelector('#picture').content;
   var elPhotosContainer = document.querySelector('.pictures');
   var elFilters = document.querySelector('.img-filters');
-  var elFilterBtns = document.querySelectorAll('.img-filters__button');
+  var elFilterButtons = document.querySelectorAll('.img-filters__button');
   var elBigPicture = document.querySelector('.big-picture');
   var elBigPictureImgWrapper = elBigPicture.querySelector('.big-picture__img');
   var elBigPictureImg = elBigPictureImgWrapper.querySelector('img');

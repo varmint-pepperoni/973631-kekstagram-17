@@ -213,7 +213,7 @@
   var updateScale = function () {
     var scale = parseInt(elScaleValue.value, 10);
 
-    scale = window.utils.getDiapozoneValue(scale, SCALE_MIN, SCALE_MAX);
+    scale = window.utils.getRangeValue(scale, SCALE_MIN, SCALE_MAX);
 
     if (scale !== state.scale) {
       state.scale = scale;
@@ -235,7 +235,7 @@
   var updateSaturation = function () {
     var saturation = parseInt(elSaturationValue.value, 10);
 
-    saturation = window.utils.getDiapozoneValue(saturation, SATURATION_MIN, SATURATION_MAX);
+    saturation = window.utils.getRangeValue(saturation, SATURATION_MIN, SATURATION_MAX);
 
     if (saturation !== state.saturation) {
       state.saturation = saturation;
@@ -262,7 +262,7 @@
   };
 
   var setScale = function (scale) {
-    var correctScale = window.utils.getDiapozoneValue(scale, SCALE_MIN, SCALE_MAX);
+    var correctScale = window.utils.getRangeValue(scale, SCALE_MIN, SCALE_MAX);
 
     if (correctScale !== state.scale) {
       elScaleValue.value = correctScale + '%';
@@ -271,7 +271,7 @@
   };
 
   var setSaturation = function (saturation) {
-    var correctSaturation = window.utils.getDiapozoneValue(saturation, SATURATION_MIN, SATURATION_MAX);
+    var correctSaturation = window.utils.getRangeValue(saturation, SATURATION_MIN, SATURATION_MAX);
 
     if (correctSaturation !== state.saturation) {
       elSaturationValue.value = correctSaturation;
